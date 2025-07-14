@@ -1,5 +1,5 @@
 import './style.css';
-import { TextInterface } from './controller/terminal';
+import { TextInterface } from './ui/terminal';
 import { runGame } from './game';
 
 // Initialize the terminal interface when the page loads
