@@ -1,13 +1,29 @@
 import { TextInterface } from "./ui/terminal";
 
+
+
+
+interface GameState { 
+  readonly hero: string;
+}
+
+const gameState: GameState = {
+  hero: 'Hero' 
+}
+
+
 export async function runGame(terminal: TextInterface ) {
   terminal.setTitle('🎮 ADVENTURE GAME 🎮');
+
+  const healthElement = document.getElementById('health1');
+    healthElement!.innerText = 'Health: 100%';
   
   await terminal.writeText('Welcome to the game!');
   const choice = await terminal.chooseOption([
     { label: 'Start Game', value: 'start' },
     { label: 'Exit', value: 'exit' }
   ]);
+  
   if (choice === 'start') {
     terminal.setTitle('🗡️ THE BRAVE ADVENTURER 🗡️');
     await terminal.writeText('Starting game...');

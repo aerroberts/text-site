@@ -4,10 +4,11 @@ interface TextInterfaceOptions {
   typeSpeed?: number;
 }
 
-interface ChoiceOption {
+interface ChoiceOption {  
   label: string;
   value: any;
 }
+
 
 export class TextInterface {
   private container: HTMLElement;
@@ -141,7 +142,7 @@ export class TextInterface {
     });
   }
 
-  public async chooseOption(options: ChoiceOption[], prompt?: string): Promise<any> {
+  public async chooseOption(options: ChoiceOption[], prompt?: string): Promise<string> {
     if (prompt) {
       await this.writeText(prompt);
     }
