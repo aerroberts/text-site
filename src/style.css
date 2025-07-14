@@ -75,9 +75,35 @@ body::after {
   z-index: 3;
 }
 
-.terminal {
+.terminal-wrapper {
   width: 100%;
   height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-title {
+  text-align: center;
+  color: var(--terminal-fg);
+  font-size: 1.8em;
+  font-weight: 500;
+  margin-bottom: 20px;
+  padding: 15px 0;
+  text-shadow: 0 0 15px var(--terminal-shadow);
+  display: none; /* Hidden by default */
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--terminal-border);
+  background: linear-gradient(135deg, 
+    transparent 0%, 
+    rgba(0, 255, 0, 0.05) 50%, 
+    transparent 100%
+  );
+  border-radius: 4px 4px 0 0;
+}
+
+.terminal {
+  flex: 1;
   background-color: var(--terminal-bg);
   border: 2px solid var(--terminal-border);
   border-radius: 8px;
@@ -191,6 +217,12 @@ body::after {
   
   #app {
     height: 90vh;
+  }
+  
+  .page-title {
+    font-size: 1.4em;
+    margin-bottom: 15px;
+    padding: 10px 0;
   }
   
   .terminal {

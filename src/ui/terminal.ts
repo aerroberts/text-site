@@ -17,6 +17,9 @@ export class TextInterface {
   private inputLine!: HTMLElement;
   private currentInput: HTMLInputElement | null = null;
   private isWaitingForInput: boolean = false;
+  private title: string = '';
+  private titleElement!: HTMLElement;
+  private terminalContainer!: HTMLElement;
 
   constructor(options: TextInterfaceOptions) {
     this.container = options.container;
@@ -27,17 +30,33 @@ export class TextInterface {
 
   private init(): void {
     this.container.innerHTML = '';
-    this.container.className = 'terminal';
+    this.container.className = 'terminal-wrapper';
+    
+    // Create title element outside the terminal
+    this.titleElement = document.createElement('div');
+    this.titleElement.className = 'page-title';
+    this.container.appendChild(this.titleElement);
+    
+    // Create the actual terminal container
+    this.terminalContainer = document.createElement('div');
+    this.terminalContainer.className = 'terminal';
+    this.container.appendChild(this.terminalContainer);
     
     this.output = document.createElement('div');
     this.output.className = 'terminal-output';
-    this.container.appendChild(this.output);
+    this.terminalContainer.appendChild(this.output);
     
     this.inputLine = document.createElement('div');
     this.inputLine.className = 'terminal-input-line';
-    this.container.appendChild(this.inputLine);
+    this.terminalContainer.appendChild(this.inputLine);
     
     this.showPrompt();
+  }
+
+  public setTitle(title: string): void {
+    this.title = title;
+    this.titleElement.textContent = title;
+    this.titleElement.style.display = title ? 'block' : 'none';
   }
 
   private showPrompt(): void {
@@ -210,7 +229,7 @@ export class TextInterface {
   }
 
   private scrollToBottom(): void {
-    this.container.scrollTop = this.container.scrollHeight;
+    this.terminalContainer.scrollTop = this.terminalContainer.scrollHeight;
   }
 
   private delay(ms: number): Promise<void> {
