@@ -1,0 +1,236 @@
+/* Retro Terminal Styles */
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap');
+
+:root {
+  --terminal-bg: #0a0a0a;
+  --terminal-fg: #00ff00;
+  --terminal-cursor: #00ff00;
+  --terminal-prompt: #00aa00;
+  --terminal-border: #333333;
+  --terminal-shadow: rgba(0, 255, 0, 0.3);
+  --scanline-opacity: 0.04;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Fira Code', 'Courier New', monospace;
+  background-color: var(--terminal-bg);
+  color: var(--terminal-fg);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow: hidden;
+}
+
+/* Scanlines effect */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    transparent 0%,
+    rgba(0, 255, 0, var(--scanline-opacity)) 50%,
+    transparent 100%
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Screen flicker effect */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--terminal-bg);
+  opacity: 0.05;
+  animation: flicker 0.15s infinite linear alternate;
+  pointer-events: none;
+  z-index: 2;
+}
+
+@keyframes flicker {
+  0% { opacity: 0.05; }
+  100% { opacity: 0.02; }
+}
+
+#app {
+  width: 100%;
+  max-width: 1200px;
+  height: 80vh;
+  position: relative;
+  z-index: 3;
+}
+
+.terminal {
+  width: 100%;
+  height: 100%;
+  background-color: var(--terminal-bg);
+  border: 2px solid var(--terminal-border);
+  border-radius: 8px;
+  padding: 20px;
+  overflow-y: auto;
+  box-shadow: 
+    0 0 20px var(--terminal-shadow),
+    inset 0 0 20px rgba(0, 255, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.terminal::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 0%,
+    rgba(0, 0, 0, 0.2) 100%
+  );
+  pointer-events: none;
+}
+
+.terminal-output {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 10px;
+}
+
+.terminal-line {
+  margin-bottom: 5px;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.terminal-prompt {
+  color: var(--terminal-prompt);
+  font-weight: 500;
+  margin-right: 5px;
+}
+
+.terminal-input-line {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  min-height: 24px;
+}
+
+.terminal-input-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.terminal-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--terminal-fg);
+  font-family: inherit;
+  font-size: inherit;
+  flex: 1;
+  padding: 0;
+  margin: 0;
+}
+
+.terminal-input::placeholder {
+  color: rgba(0, 255, 0, 0.5);
+}
+
+.terminal-cursor {
+  color: var(--terminal-cursor);
+  animation: blink 1s infinite;
+  font-weight: bold;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* Custom scrollbar */
+.terminal::-webkit-scrollbar {
+  width: 8px;
+}
+
+.terminal::-webkit-scrollbar-track {
+  background: var(--terminal-bg);
+}
+
+.terminal::-webkit-scrollbar-thumb {
+  background: var(--terminal-border);
+  border-radius: 4px;
+}
+
+.terminal::-webkit-scrollbar-thumb:hover {
+  background: var(--terminal-fg);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+  
+  #app {
+    height: 90vh;
+  }
+  
+  .terminal {
+    padding: 15px;
+    font-size: 14px;
+  }
+}
+
+/* Print styles */
+@media print {
+  body::before,
+  body::after {
+    display: none;
+  }
+  
+  .terminal {
+    border: 1px solid #000;
+    box-shadow: none;
+    background: #fff;
+    color: #000;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  :root {
+    --terminal-fg: #ffffff;
+    --terminal-bg: #000000;
+    --terminal-cursor: #ffffff;
+    --terminal-prompt: #ffffff;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .terminal-cursor {
+    animation: none;
+  }
+  
+  body::after {
+    animation: none;
+  }
+}
