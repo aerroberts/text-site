@@ -224,6 +224,72 @@ body::after {
   }
 }
 
+/* Terminal buttons for choices */
+.terminal-choices {
+  margin: 10px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.terminal-choice-button {
+  background: transparent;
+  border: 1px solid var(--terminal-border);
+  color: var(--terminal-fg);
+  font-family: inherit;
+  font-size: inherit;
+  padding: 8px 12px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+.terminal-choice-button:hover {
+  background: rgba(0, 255, 0, 0.1);
+  border-color: var(--terminal-fg);
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+}
+
+.terminal-choice-button:active {
+  background: rgba(0, 255, 0, 0.2);
+  transform: translateY(1px);
+}
+
+.terminal-choice-button:focus {
+  outline: none;
+  border-color: var(--terminal-cursor);
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+}
+
+.terminal-choice-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 255, 0, 0.1),
+    transparent
+  );
+  transition: left 0.3s ease;
+}
+
+.terminal-choice-button:hover::before {
+  left: 100%;
+}
+
+.terminal-choice-number {
+  color: var(--terminal-prompt);
+  font-weight: 500;
+  margin-right: 8px;
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .terminal-cursor {
@@ -232,5 +298,13 @@ body::after {
   
   body::after {
     animation: none;
+  }
+  
+  .terminal-choice-button {
+    transition: none;
+  }
+  
+  .terminal-choice-button::before {
+    display: none;
   }
 }

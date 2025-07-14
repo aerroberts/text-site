@@ -127,21 +127,77 @@ export class TextInterface {
       await this.writeText(prompt);
     }
 
-    // Display options
-    for (let i = 0; i < options.length; i++) {
-      await this.writeText(`${i + 1}. ${options[i].label}`);
-    }
-
-    while (true) {
-      const choice = await this.askForInput('Select an option (1-' + options.length + '): ');
-      const choiceNum = parseInt(choice);
+    return new Promise((resolve) => {
+      // Create choices container
+      const choicesContainer = document.createElement('div');
+      choicesContainer.className = 'terminal-choices';
       
-      if (choiceNum >= 1 && choiceNum <= options.length) {
-        return options[choiceNum - 1].value;
-      } else {
-        await this.writeText('Invalid choice. Please try again.');
+      // Create button for each option
+      options.forEach((option, index) => {
+        const button = document.createElement('button');
+        button.className = 'terminal-choice-button';
+        button.innerHTML = `<span class="terminal-choice-number">${index + 1}.</span>${option.label}`;
+        
+        button.addEventListener('click', () => {
+          // Show the selected choice in the output
+          const choiceLine = document.createElement('div');
+          choiceLine.className = 'terminal-line';
+          choiceLine.innerHTML = `<span class="terminal-prompt">${this.prompt}</span>Selected: ${option.label}`;
+          this.output.appendChild(choiceLine);
+          
+          // Remove the buttons
+          choicesContainer.remove();
+          
+          // Show prompt again
+          this.showPrompt();
+          this.scrollToBottom();
+          
+          resolve(option.value);
+        });
+        
+        // Add keyboard support (Enter and number keys)
+        button.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            button.click();
+          }
+        });
+        
+        choicesContainer.appendChild(button);
+      });
+      
+      // Add choices to output
+      this.output.appendChild(choicesContainer);
+      
+      // Focus first button
+      const firstButton = choicesContainer.querySelector('.terminal-choice-button') as HTMLButtonElement;
+      if (firstButton) {
+        firstButton.focus();
       }
-    }
+      
+      // Add number key support for quick selection
+      const keyHandler = (e: KeyboardEvent) => {
+        const num = parseInt(e.key);
+        if (num >= 1 && num <= options.length) {
+          e.preventDefault();
+          const button = choicesContainer.children[num - 1] as HTMLButtonElement;
+          button.click();
+          document.removeEventListener('keydown', keyHandler);
+        }
+      };
+      
+      document.addEventListener('keydown', keyHandler);
+      
+      // Clean up event listener when choice is made
+      const cleanup = () => {
+        document.removeEventListener('keydown', keyHandler);
+      };
+      
+      // Store cleanup function to remove listener if needed
+      choicesContainer.addEventListener('click', cleanup);
+      
+      this.scrollToBottom();
+    });
   }
 
   public clear(): void {
