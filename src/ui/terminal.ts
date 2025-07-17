@@ -156,7 +156,7 @@ export class TextInterface {
       options.forEach((option, index) => {
         const button = document.createElement('button');
         button.className = 'terminal-choice-button';
-        button.innerHTML = `<span class="terminal-choice-number">${index + 1}.</span>${option.label}`;
+        button.innerHTML = `<span class="terminal-choice-number"></span>${option.label}`; //${index + 1}.
         
         button.addEventListener('click', () => {
           // Show the selected choice in the output
@@ -190,10 +190,10 @@ export class TextInterface {
       this.output.appendChild(choicesContainer);
       
       // Focus first button
-      const firstButton = choicesContainer.querySelector('.terminal-choice-button') as HTMLButtonElement;
-      if (firstButton) {
-        firstButton.focus();
-      }
+      //const firstButton = choicesContainer.querySelector('.terminal-choice-button') as HTMLButtonElement;
+      //if (firstButton) {
+      //  firstButton.focus();
+      //}
       
       // Add number key support for quick selection
       const keyHandler = (e: KeyboardEvent) => {
