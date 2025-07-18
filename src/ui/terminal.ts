@@ -69,8 +69,9 @@ export class TextInterface {
     `;
   }
 
-  public async writeText(text: string, speed?: number): Promise<void> {
+  public async writeText(text: string, delay:number, speed?: number): Promise<void> {
     const actualSpeed = speed || this.typeSpeed;
+    const pause = delay;
     const line = document.createElement('div');
     line.className = 'terminal-line';
     this.output.appendChild(line);
@@ -82,17 +83,18 @@ export class TextInterface {
         await this.delay(actualSpeed);
       }
     }
+    await this.delay(pause)
   }
 
   public async writeLines(lines: string[], speed?: number): Promise<void> {
     for (const line of lines) {
-      await this.writeText(line, speed);
+      await this.writeText(line, 0, speed);
     }
   }
 
   public async askForInput(prompt?: string): Promise<string> {
     if (prompt) {
-      await this.writeText(prompt);
+      await this.writeText(prompt, 0);
     }
 
     return new Promise((resolve) => {
@@ -144,7 +146,7 @@ export class TextInterface {
 
   public async chooseOption(options: ChoiceOption[], prompt?: string): Promise<string> {
     if (prompt) {
-      await this.writeText(prompt);
+      await this.writeText(prompt, 0);
     }
 
     return new Promise((resolve) => {

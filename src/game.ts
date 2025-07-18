@@ -1,15 +1,11 @@
 import { TextInterface } from "./ui/terminal";
 import { Player } from "./player"
-import { Items} from "./items"
 import { Shop } from "./shop"
 
 export async function runGame(terminal: TextInterface ) {
   terminal.setTitle('Beginnings');
 
-  const items = new Items;
-
   const player = new Player;
-  player.setLocation('Store')
   player.setGold(100)
   const shop = new Shop;
   
@@ -21,8 +17,9 @@ export async function runGame(terminal: TextInterface ) {
   }
 
     //Start
-  if(player.getLocation()=='Start'){
-    await terminal.writeText('You\'re a spartan. Train and beat all of your enemies. Ready?');
+    gotoTownCenter()
+  async function gotoStart(){
+    await terminal.writeText('You\'re a spartan. Train and beat all of your enemies. Ready?', 100);
     const choice = await terminal.chooseOption([
       { label: 'Aye', value: 'start' },
       { label: 'Nah', value: 'exit' }
@@ -31,51 +28,76 @@ export async function runGame(terminal: TextInterface ) {
     if (choice === 'start') {
       terminal.setTitle('Game started');
       const name = await terminal.askForInput('What is your name?');
-      await terminal.writeText(`Hello, ${name}! Nice to meet you.`);
+      await terminal.writeText(`Hello, ${name}! Nice to meet you.`, 500);
       player.setName(name);
       terminal.clear();
-      player.setLocation('Town_Center');
+      gotoTownCenter();
     } else if (choice === 'exit') {
       terminal.setTitle('👋 GOODBYE! 👋');
-      await terminal.writeText('Exiting game...');
+      await terminal.writeText('Exiting game...', 0);
     }
   }
 
   //Town Center
-  if(player.getLocation() == 'Town_Center'){
+  async function gotoTownCenter(){
     terminal.setTitle('Town Center')
-    await terminal.writeText('Where would you like to go?')
+    await terminal.writeText('Where would you like to go?', 0)
     const choice = await terminal.chooseOption([
       { label: 'Training Hall', value: 'Training Hall'},
       { label: 'Store', value: 'Store'},
       { label: 'Arena', value: 'Arena'},
     ])
-    await terminal.writeText(`Going to the ${choice}`)
-    player.setLocation(`${choice}`)
+    await terminal.writeText(`Going to the ${choice}.`, 500)
+    if(choice == 'Training Hall'){gotoTrainingHall()}
+    else if(choice == 'Store'){gotoStore()}
+    else{gotoArena()}
   }
   
   //Training Hall
 
+  async function gotoTrainingHall(){
+
+  }
   //Store
-  if(player.getLocation() == 'Store'){
+  async function gotoStore(){
     terminal.clear()
-    await terminal.writeText('What would you like to buy?')
-    //generate shop inventory
-    //Creates an array of every shop item index
-    const potentialItems = [];
-    for(let i=0; i<shop.getShopItemsArrayLength(); i++){
-      potentialItems[i] = i
+    await terminal.writeText('What would you like to buy?', 0)
+
+    if (!shop.getVisited()){
+      shop.resetDailyItems();
+      shop.generateDailyItems(shop.getDailyItemsAmounts())
+      shop.setVisited(true)
     }
-    //Generates a random index from that list, grabs that item, and removes the index from the list of potential items
-    const shopItems = [];
-    for(let i=0; i<3; i++){
-      const randItem = shop.getRandomShopItem(potentialItems);
-      potentialItems.splice(potentialItems.indexOf(randItem.index), 1);
-      shopItems[i] = { label: `${randItem.item.label} - - - Cost: ${randItem.item.cost} - - - Desc: ${randItem.item.description}`, value: `${randItem.item.index}`};
+    const items = [{label:'', value:''}]
+    for(let i=0; i<shop.getDailyItemsAmounts(); i++){
+      const item = shop.getDailyItem(i)
+      items[i] = { label: `${item.label} - - - Cost: ${item.cost} - - - Desc: ${item.description}`, value: `${item.index}`};
     }
-    const boughtItem = shop.getItem(+await terminal.chooseOption(shopItems))
-    await terminal.writeText(`Bought ${boughtItem.label}`)
-    player.setGold(-boughtItem.cost)
-    updatePlayerInfo()
+    items[shop.getDailyItemsAmounts()] = { label: `Reroll? - - - Cost: 20`, value: 'Reroll'}
+    const choice = await terminal.chooseOption(items)
+    if (choice=='Reroll' && player.getGold() >=20){
+      player.setGold(-20)
+      shop.setVisited(false);
+      shop.setDailyItemsAmounts(shop.getMaxDailyItemsAmounts())
+      updatePlayerInfo()
+      gotoStore();
+    }
+    else if (choice!='Reroll' && shop.getItem(+choice).cost <= player.getGold()){
+      const boughtItem = shop.getItem(+choice)
+      await terminal.writeText(`Bought ${boughtItem.label}`, 500)
+      player.setGold(-boughtItem.cost)
+      shop.removeDailyItems(shop.getItem(+choice))
+      shop.setDailyItemsAmounts(shop.getDailyItemsAmounts()-1)
+      updatePlayerInfo()
+      gotoStore();
+    }
+    else{
+      await terminal.writeText("Not enough gold.", 500)
+      gotoStore();
+    }
+  }
+
+  async function gotoArena(){
+
   }
 }
