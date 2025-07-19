@@ -1,5 +1,7 @@
 import { Item, Items } from "./items"
+import { Maths } from "./math"
 
+const math = new Maths
 const items = new Items
 
 export class Shop {
@@ -18,8 +20,11 @@ export class Shop {
         return this.dailyItemsAmount;
     }
 
-    public setDailyItemsAmounts(amount:number){
-        this.dailyItemsAmount=amount
+    public setDailyItemsAmounts(amount:number, add?:boolean){
+        if(add){this.dailyItemsAmount+=amount}
+        else{
+            this.dailyItemsAmount=amount
+        }
     }
 
     public getVisited(){
@@ -65,7 +70,7 @@ export class Shop {
     }
 
     public getRandomShopItem(availItems:number[]){
-        const index = availItems[Math.floor(Math.random() * (availItems.length-1) + 1)]
+        const index = availItems[math.randomFromRange(availItems.length, true)]
         return {item: this.shopItemsArray[index], index: index}
     }
 
