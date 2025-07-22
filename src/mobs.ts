@@ -10,11 +10,24 @@ export interface mob_stats{
 }
 
 export class Mob{
-    private maxStats:mob_stats = {
+    private defStats:mob_stats = {
         health: 10,
         name:'',
-        attack:10,
+        attack:8,
         speed:10
+    }
+    private maxStats:mob_stats = {
+        health: 40,
+        name: '',
+        attack: 35,
+        speed: 10
+    }
+
+    private defBossStats:mob_stats = {
+        health:100,
+        name: '',
+        attack:20,
+        speed:20
     }
     private nameModifiers:string[] = [
         'Meager', 'Weakling', 'Doofus', 'Egregious', 'Serpentine', 'Magnanimous', 'Boisterous','Big','Fatty','Fearful','Dreadful','Strong','Stinky'
@@ -27,17 +40,29 @@ export class Mob{
     //     return Math.floor(Math.random() * (this.stats.attack))
     // }
 
-    public generateMob(){
+    public generateMob(playerAttack: number){
+        let health = math.randomFromRange(this.defStats.health, false);
+        let attack = math.randomFromRange(this.defStats.attack+(playerAttack/1.75), false)
+        if (health>this.maxStats.health){health = this.maxStats.health}
+        if (attack>this.maxStats.attack){attack = this.maxStats.attack}
         return{
-            health: math.randomFromRange(this.maxStats.health, false),
+            health: health,
             name: this.generateName(),
-            attack: math.randomFromRange(this.maxStats.attack, false),
-            speed:math.randomFromRange(this.maxStats.speed, false)
+            attack: attack,
+            speed:math.randomFromRange(this.defStats.speed, false)
         }
     }
     private generateName(){
         const modifier:string = this.nameModifiers[math.randomFromRange(this.nameModifiers.length, true)]
         const firstName:string = this.firstNames[math.randomFromRange(this.firstNames.length, true)]
         return `The ${modifier} ${firstName}`
+    }
+    public generateBoss(){
+        return{
+            health: math.randomFromRange(this.defBossStats.health, false)+200,
+            name: this.generateName(),
+            attack: math.randomFromRange(this.defBossStats.attack, false)+40,
+            speed:math.randomFromRange(this.defBossStats.speed, false)+40
+        }
     }
 }

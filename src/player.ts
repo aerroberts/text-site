@@ -8,6 +8,7 @@ export class Player {
     private attack: number = 2;
     private speed: number = 5
     private potions: number = 0;
+    private goldMod: number = 0
 
     public setPotions(amount:number){
         this.potions+=amount
@@ -39,11 +40,17 @@ export class Player {
     public getHealth(){
         return this.health
     }
-    public setGold(amount:number) {
-        this.gold+=amount
+    public setGold(amount:number, fight:boolean) {
+        if(fight){this.gold+=amount+this.goldMod}
+        else{this.gold+=amount}
+        return amount+this.goldMod
+        
     }
     public getGold(){
         return this.gold
+    }
+    public setGoldMod(amount: number){
+        this.goldMod+=amount;
     }
     public setAttack(amount:number){
         this.attack+=amount
@@ -59,6 +66,15 @@ export class Player {
     }
     public getSpeed(){
         return this.speed
+    }
+    public clear(){
+        this.health=100;
+        this.name = '';
+        this.location = '';
+        this.gold = 0;
+        this.attack = 2;
+        this.speed = 5;
+        this.potions = 0;
     }
     public handleEffects(effect:{effect:string, amount:number}){
         if(effect.effect=='attack'){
@@ -76,6 +92,9 @@ export class Player {
         }
         else if(effect.effect=='potion'){
             this.setPotions(effect.amount)
+        }
+        else if(effect.effect=='goldBuff'){
+            this.setGoldMod(effect.amount)
         }
     }
 }
